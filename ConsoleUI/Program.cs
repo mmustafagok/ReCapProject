@@ -1,4 +1,5 @@
 ﻿using Bussiness.Concrete;
+using DataAccess.Concrete.EntityFramework;
 using DataAccess.Concrete.InMemory;
 using Entities.Concrete;
 using System;
@@ -9,61 +10,111 @@ namespace ConsoleUI
     {
         static void Main(string[] args)
         {
-            CarManager carManager = new CarManager(new InMemoryCarDal());
+            CarManager carManager = new CarManager(new EfCarDal());
+            BrandManager brandManager = new BrandManager(new EfBrandDal());
+            ColorManager colorManager = new ColorManager(new EfColorDal());
 
-            foreach (var car in carManager.GetAll())
+
+
+            GetCarDetails(carManager);
+
+
+            //ColorAdd(colorManager);
+
+            //CarAdd(carManager);
+
+            //ColorGetAll(colorManager);
+
+            //BrandAdd(brandManager);
+
+            //BrandGetAll(brandManager);
+
+            //GetByDailyPrice(carManager);
+
+            //CarDelete(carManager);
+
+            //GetAll(carManager);
+
+        }
+
+
+
+        private static void CarDelete(CarManager carManager)
+        {
+            carManager.Delete(new Car
             {
-                Console.WriteLine(car.Description);
-            }
-
-            Console.WriteLine("--------------------------------------");
-
-            carManager.Add(new Car 
-            {
-                Id=4,
-                BrandId=2,
-                ColorId=1,
-                DailyPrice=125,
-                ModelYear= 2016,
-                Description= "Audi A3, Siyah, 125 TL, 2016 model"
+                Id = 13
             });
+        }
 
-            foreach (var car in carManager.GetAll())
+        private static void GetAll(CarManager carManager)
+        {
+            foreach (var car in carManager.GetAll().Data)
             {
                 Console.WriteLine(car.Description);
             }
+        }
 
-            Console.WriteLine("--------------------------------------");
-
-            carManager.Delete(new Car {Id=1 });
-
-            foreach (var car in carManager.GetAll())
+        private static void GetByDailyPrice(CarManager carManager)
+        {
+            foreach (var car in carManager.GetByDailyPrice(150, 260).Data)
             {
                 Console.WriteLine(car.Description);
             }
+        }
 
-            Console.WriteLine("--------------------------------------");
-
-            carManager.Update( new Car 
+        private static void BrandGetAll(BrandManager brandManager)
+        {
+            foreach (var brand in brandManager.GetAll().Data)
             {
-                Id = 2,
-                BrandId = 1,
-                ColorId = 2,
-                DailyPrice = 300,
-                ModelYear = 2018,
-                Description = "BMW i8, Beyaz, 300 TL, 2018 model"
+                Console.WriteLine(brand.BrandName);
+            }
+        }
 
+        private static void BrandAdd(BrandManager brandManager)
+        {
+            brandManager.Add(new Brand
+            {
+                BrandName = "Volkswagen"
+            }
+            );
+        }
+
+        private static void ColorGetAll(ColorManager colorManager)
+        {
+            foreach (var color in colorManager.GetAll().Data)
+            {
+                Console.WriteLine(color.ColorName);
+            }
+        }
+
+        private static void ColorAdd(ColorManager colorManager)
+        {
+            colorManager.Add(new Color
+            {
+                ColorName = "Yeşil"
             });
+        }
 
-            foreach (var car in carManager.GetAll())
+        private static void CarAdd(CarManager carManager)
+        {
+            carManager.Add(new Car
             {
-                Console.WriteLine(car.Description);
+                BrandId = 2,
+                ColorId = 1,
+                DailyPrice = -1,
+                ModelYear = 2019,
+                Description = "Mercedes CLA"
             }
+                        );
+        }
 
-            Console.WriteLine("--------------------------------------");
-
-
-
+        private static void GetCarDetails(CarManager carManager)
+        {
+            foreach (var car in carManager.GetCarDetails().Data)
+            {
+                Console.WriteLine(car.Description + " - " + car.BrandName + " - " + car.DailyPrice + "TL");
+            }
         }
     }
 }
